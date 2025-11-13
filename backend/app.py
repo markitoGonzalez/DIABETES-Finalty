@@ -34,12 +34,9 @@ def predict():
         # Crear DataFrame con el orden correcto
         df = pd.DataFrame([[data[v] for v in variables_orden]], columns=variables_orden)
 
-        # ESCALAR SOLO BMI y Age
-        df[["BMI", "Age"]] = scaler.transform(df[["BMI", "Age"]])
-
         # PREDICCIÓN
         pred = int(modelo.predict(df)[0])
-        prob = float(modelo.predict_proba(df)[0][pred])
+        prob = float(modelo.predict_proba(df)[0][1])
 
         return jsonify({
             "resultado": pred,
