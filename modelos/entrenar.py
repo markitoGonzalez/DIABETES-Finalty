@@ -26,7 +26,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # Escalado SOLO a BMI y Age
-print("📏 Escalando variables BMI y Age...")
+print("Escalando variables BMI y Age...")
 
 scaler = StandardScaler()
 cols_to_scale = ["BMI", "Age"]
