@@ -8,5 +8,4 @@ requests==2.32.5
 streamlit==1.51.0
 matplotlib==3.8.4
 seaborn==0.13.2
-pytest==9.0.2
-
+gunicorn==23.0.0
