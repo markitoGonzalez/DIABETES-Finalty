@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import logging
 import os
+import base64
 
 app = Flask(__name__)
 CORS(app)
@@ -21,11 +22,38 @@ logging.basicConfig(
 logging.info("Iniciando API con el modelo de Regresión Logística...")
 
 # ================================
-# CARGAR MODELO Y SCALER
+# RUTAS DE MODELO Y SCALER
 # ================================
+os.makedirs("modelos", exist_ok=True)  # Asegura que exista la carpeta
+
 ruta_modelo = "modelos/modelo_rl_cdc_v1.sav"
 ruta_scaler = "modelos/scaler_cdc.sav"
 
+# ================================
+# RECONSTRUIR MODELOS DESDE VARIABLES (RAILWAY)
+# ================================
+scaler_b64 = os.getenv("SCALER_B64")
+model_b64 = os.getenv("MODEL_B64")
+
+if scaler_b64 and not os.path.exists(ruta_scaler):
+    try:
+        with open(ruta_scaler, "wb") as f:
+            f.write(base64.b64decode(scaler_b64))
+        logging.info("Scaler reconstruido correctamente desde SCALER_B64.")
+    except Exception as e:
+        logging.error(f"Error reconstruyendo scaler: {str(e)}")
+
+if model_b64 and not os.path.exists(ruta_modelo):
+    try:
+        with open(ruta_modelo, "wb") as f:
+            f.write(base64.b64decode(model_b64))
+        logging.info("Modelo RL reconstruido correctamente desde MODEL_B64.")
+    except Exception as e:
+        logging.error(f"Error reconstruyendo modelo: {str(e)}")
+
+# ================================
+# CARGAR MODELO Y SCALER
+# ================================
 if not os.path.exists(ruta_modelo):
     raise FileNotFoundError(f"No se encuentra el modelo en {ruta_modelo}")
 
@@ -42,7 +70,6 @@ variables_orden = [
 ]
 
 cols_to_scale = ["BMI", "Age"]
-
 
 # ================================
 # ENDPOINT DE PREDICCIÓN
